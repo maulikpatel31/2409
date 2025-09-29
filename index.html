@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sorry My Friend</title>
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function() {
+      emailjs.init("KUal0zL13CWmjhLzk"); // Your Public Key
+    })();
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      animation: backgroundShift 8s infinite alternate;
+      overflow: hidden;
+    }
+
+    @keyframes backgroundShift {
+      0% { background: linear-gradient(135deg, #89f7fe, #66a6ff); }
+      100% { background: linear-gradient(135deg, #f6d365, #fda085); }
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      max-width: 450px;
+      animation: fadeIn 2s ease-in;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .message {
+      font-size: 1.1em;
+      color: #444;
+      margin-bottom: 25px;
+      min-height: 60px;
+    }
+
+    button {
+      background-color: #4da3ff;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 30px;
+      font-size: 1em;
+      cursor: pointer;
+      margin: 10px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    button:hover {
+      background-color: #2e89ff;
+      transform: scale(1.05);
+    }
+
+    button:hover::after {
+      content: "💖";
+      position: absolute;
+      right: -25px;
+      top: 50%;
+      transform: translateY(-50%);
+      animation: floatHeart 1s infinite ease-in-out;
+    }
+
+    @keyframes floatHeart {
+      0%, 100% { transform: translateY(-50%) scale(1); }
+      50% { transform: translateY(-60%) scale(1.2); }
+    }
+
+    input {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      width: 80%;
+      font-size: 1em;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hug {
+      font-size: 2em;
+      display: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="greeting">Hey 😊</h1>
+
+    <input type="text" id="friendName" placeholder="Enter your name..." />
+    <button onclick="startMessage()">Start</button>
+
+    <div class="message" id="message"></div>
+
+    <button onclick="sendHug()">Send Virtual Hug 🤗</button>
+    <div class="hug" id="hug">🤗🤗🤗 Sending you a big hug, friend!</div>
+  </div>
+
+  <script>
+    const messageElement = document.getElementById("message");
+    const hugElement = document.getElementById("hug");
+
+    // Time-based greeting
+    function setGreeting(name) {
+      const hour = new Date().getHours();
+      let greet = "Hello";
+
+      if (hour < 12) greet = "Good Morning";
+      else if (hour < 18) greet = "Good Afternoon";
+      else greet = "Good Evening";
+
+      document.getElementById("greeting").textContent = `${greet}, ${name} 👋`;
+    }
+
+    // Typing effect
+    function typeMessage(text, speed = 50) {
+      let i = 0;
+      messageElement.innerHTML = "";
+
+      function typeChar() {
+        if (i < text.length) {
+          messageElement.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(typeChar, speed);
+        }
+      }
+
+      typeChar();
+    }
+
+    // Start + Send Email
+    function startMessage() {
+      const nameInput = document.getElementById("friendName").value.trim();
+      const name = nameInput || "Friend";
+
+      setGreeting(name);
+
+      const message = `I'm really sorry if I hurt you, ${name}. It was never my intention. You are important to me, and I truly value our friendship. Let's leave the bad vibes behind and move forward. 😊`;
+
+      typeMessage(message);
+
+      // Send Email via EmailJS
+      emailjs.send("service_o0btsk4", "template_460orms", {
+        name: name,
+        message: message
+      }).then(
+        function(response) {
+          console.log("✅ Email sent:", response.status, response.text);
+        },
+        function(error) {
+          console.error("❌ Email failed:", error);
+        }
+      );
+    }
+
+    // Hug Animation
+    function sendHug() {
+      hugElement.style.display = "block";
+      hugElement.style.opacity = 0;
+      hugElement.style.transition = "opacity 0.5s ease";
+      setTimeout(() => {
+        hugElement.style.opacity = 1;
+      }, 100);
+
+      setTimeout(() => {
+        hugElement.style.opacity = 0;
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
